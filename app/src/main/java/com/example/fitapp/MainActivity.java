@@ -2,74 +2,82 @@ package com.example.fitapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
+    Bundle bundle;
+    public TextView route;
 
-    public boolean binded;
-    private Possition sPossition;
-
-    private final ServiceConnection connect = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Possition.ServerConnection sC = (Possition.ServerConnection) service;
-            sPossition = sC.getPos();
-            binded = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            binded = false;
-        }
-    };
+    Button start, stop;
+    private BroadcastReceiver bR;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        takeRoute();
+        route = findViewById(R.id.route);
+        start = findViewById(R.id.start);
+        stop = findViewById(R.id.stop);
+        start.setOnClickListener(startButton);
+        stop.setOnClickListener(stopButton);
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        Intent PossInt = new Intent(this, Possition.class);
-        bindService(PossInt, connect, Context.BIND_AUTO_CREATE);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(binded)
-        {
-            unbindService(connect);
-            binded = false;
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(bR == null){
+            bR = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Log.v("BroadcastReceived", "Received Broadcast");
+                            bundle = intent.getExtras();
+                            String result = bundle.getString("location");
+                            route.setText(result);
+                }
+            };
         }
+        IntentFilter locationFilter = new IntentFilter("location_update");
+        registerReceiver(bR, locationFilter);
     }
 
-    private void takeRoute()
-    {
-        final TextView route = findViewById(R.id.route);
-        final Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(binded == true) {
-                    route.setText(sPossition.getResult());
-                }
-                handler.postDelayed(this, 1000);
-                }
-        });
-    }
 
+    View.OnClickListener startButton = v -> {
+        Intent i = new Intent(MainActivity.this, Possition.class);
+        startService(i);
+    };
+
+    View.OnClickListener stopButton = v -> {
+        Intent i = new Intent(MainActivity.this, Possition.class);
+        stopService(i);
+    };
 
 }

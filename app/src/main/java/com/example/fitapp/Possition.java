@@ -20,49 +20,66 @@ public class Possition extends Service{
     public double latitude, longitude, distance, totalDistance, step = 0.85;
 
     LocationManager PosManager;
-
+    LocationListener listener;
     public Possition() {}
 
-    public class ServerConnection extends Binder{
-        Possition getPos() {return Possition.this;}
-    }
-
-    private final ServerConnection connection = new ServerConnection();
 
     public IBinder onBind(Intent intent){
+        return null;
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         PosManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            listener = location -> {
+            possition = location;
+            if(lastPossition == null){lastPossition = possition;}
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            distance = location.distanceTo(lastPossition);
+            totalDistance += distance;
+            Intent i = new Intent("location_update");
+            i.putExtra("latitude", location.getLatitude());
+            i.putExtra("longitude", location.getLongitude());
+            i.putExtra("distance", (double)location.distanceTo(lastPossition));
+            i.putExtra("location", getResult());
+            sendBroadcast(i);
+
+            lastPossition = location;
+
+        };
         try {
             PosManager.requestLocationUpdates("gps", 1000, 2, listener);
+            Log.v("Access granted", "Access granted");
         } catch(SecurityException se){
             Log.v("Inaccessible", "Problem with Security");
         }
-        return connection;
     }
 
-    LocationListener listener = new LocationListener() {
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-          possition = location;
-          if(lastPossition == null){lastPossition = possition;}
-          latitude = location.getLatitude();
-          longitude = location.getLongitude();
-          distance = location.distanceTo(lastPossition);
-          totalDistance += distance;
-          lastPossition = location;
-          }
-    };
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(PosManager != null){
+            //noinspection MissingPermission
+            PosManager.removeUpdates(listener);
+        }
+    }
 
     public String getResult(){
+
         String result = "\nszerokość " +
-                changeToDegrees(true, latitude) + "\ndługość  " +
-                changeToDegrees(false, longitude) + "\nodległość " +
+                Possition.changeToDegrees(true, latitude) + "\ndługość  " +
+                Possition.changeToDegrees(false, longitude) + "\nodległość " +
                 String.format(Locale.UK, "%10.1f", distance) + "\ncałkowita " +
                 String.format("%10.1f", totalDistance) + "\nliczba kroków " +
                 String.format("%06d", (int) (totalDistance / step));
         return result;
     }
 
-    public String changeToDegrees(boolean phi, double x)
+    public static String changeToDegrees(boolean phi, double x)
     {
         int sign = (int)Math.signum(x);
         double abs = Math.abs(x);
