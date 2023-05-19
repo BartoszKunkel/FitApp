@@ -8,26 +8,54 @@ import java.util.Locale;
 
 public class LocationModel {
 
-    public Location possition;
-    public double latitude, longitude, distance, totalDistance, step = 0.85;
+    public Location firstPossition, lastPossition;
+    public int id_l, time, id_tour;
 
-    public LocationModel(Location possition, Location lastPossition, double latitude, double longitude, double distance, double totalDistance, double step) {
-        this.possition = possition;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.distance = distance;
-        this.totalDistance = totalDistance;
-        this.step = step;
+    public LocationModel(Location firstPossition, Location lastPossition, int id_l, int time, int id_tour) {
+        this.firstPossition = firstPossition;
+        this.lastPossition = lastPossition;
+        this.id_l = id_l;
+        this.time = time;
+        this.id_tour = id_tour;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return "\nszerokość " +
-                latitude + "\ndługość  " +
-                longitude + "\nodległość " +
-                String.format(Locale.UK, "%10.1f", distance) + "\ncałkowita " +
-                String.format("%10.1f", totalDistance) + "\nliczba kroków " +
-                String.format("%06d", (int) (totalDistance / step));
+    public Location getFirstPossition() {
+        return firstPossition;
+    }
+
+    public void setFirstPossition(Location firstPossition) {
+        this.firstPossition = firstPossition;
+    }
+
+    public Location getLastPossition() {
+        return lastPossition;
+    }
+
+    public void setLastPossition(Location lastPossition) {
+        this.lastPossition = lastPossition;
+    }
+
+    public int getId_l() {
+        return id_l;
+    }
+
+    public void setId_l(int id_l) {
+        this.id_l = id_l;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public int getId_tour() {
+        return id_tour;
+    }
+
+    public void setId_tour(int id_tour) {
+        this.id_tour = id_tour;
     }
 }

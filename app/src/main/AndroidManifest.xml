@@ -19,6 +19,9 @@
             android:name=".Possition"
             android:enabled="true"
             android:exported="true"></service>
+        <service android:name="Stoper"
+                 android:enabled="true"
+                 android:exported="true"></service>
         <activity
             android:name=".MainActivity"
             android:exported="true">
