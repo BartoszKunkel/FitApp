@@ -2,16 +2,18 @@ package com.example.fitapp;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Stoper extends Service{
 
-    public int secs;
+    public static int secs;
 
     public Stoper() {}
 
@@ -25,6 +27,7 @@ public class Stoper extends Service{
     public void onCreate() {
         super.onCreate();
         Log.v("dsa", "Stoper is working");
+
         Intent i = new Intent("timer");
         final Handler handler = new Handler();
         handler.post(new Runnable(){
@@ -37,7 +40,7 @@ public class Stoper extends Service{
 
                 i.putExtra("Stoper" , time);
                 sendBroadcast(i);
-                secs++;
+                if(MainActivity.going == true) secs++;
                 handler.postDelayed(this,1000);
             }
         });
@@ -50,9 +53,7 @@ public class Stoper extends Service{
     }
 
 
-    private void runStoper(){
 
-    }
 
 
 

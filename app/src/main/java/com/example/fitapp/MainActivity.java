@@ -1,5 +1,6 @@
 package com.example.fitapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     Button start, stop;
     private BroadcastReceiver bRLocation = null, bRStoper = null;
 
-
+    public static Boolean going = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         stop = findViewById(R.id.stop);
         start.setOnClickListener(startButton);
         stop.setOnClickListener(stopButton);
+        Intent i = new Intent(this, Possition.class);
+        Intent ii = new Intent(this, Stoper.class);
+        startService(i);
+        startService(ii);
+
     }
 
 
@@ -51,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        going = false;
+    }
 
     @Override
     protected void onResume() {
@@ -81,22 +92,25 @@ public class MainActivity extends AppCompatActivity {
         }
         registerReceiver(bRLocation, new IntentFilter("location_update"));
         registerReceiver(bRStoper, new IntentFilter("timer"));
+
+
     }
 
 
-    View.OnClickListener startButton = v -> {
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble("distance", Possition.distance);
+        outState.putDouble("totalDistance",Possition.totalDistance);
+        outState.putInt("secs", Stoper.secs);
+    }
 
-        Intent i = new Intent(this, Possition.class);
-        Intent ii = new Intent(this, Stoper.class);
-        startService(i);
-        startService(ii);
+    View.OnClickListener startButton = v -> {
+        going = true;
     };
 
     View.OnClickListener stopButton = v -> {
-        Intent i = new Intent(this, Possition.class);
-        Intent ii = new Intent(this, Stoper.class);
-        stopService(i);
-        stopService(ii);
+        going = false;
     };
 
 }

@@ -17,7 +17,7 @@ import java.util.Locale;
 public class Possition extends Service{
 
     public Location possition = null, lastPossition = null;
-    public double latitude, longitude, distance, totalDistance, step = 0.85;
+    public static double latitude, longitude, distance, totalDistance, step = 0.85;
 
     LocationManager PosManager;
     LocationListener listener;
@@ -35,16 +35,20 @@ public class Possition extends Service{
         PosManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
             listener = location -> {
-            possition = location;
-            if(lastPossition == null){lastPossition = possition;}
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            distance = location.distanceTo(lastPossition);
-            totalDistance += distance;
+                possition = location;
+            if(MainActivity.going ) {
+                if (lastPossition == null) {
+                    lastPossition = possition;
+                }
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                distance = location.distanceTo(lastPossition);
+                totalDistance += distance;
+            }
             Intent i = new Intent("location_update");
             i.putExtra("latitude", location.getLatitude());
             i.putExtra("longitude", location.getLongitude());
-            i.putExtra("distance", (double)location.distanceTo(lastPossition));
+            if(MainActivity.going)i.putExtra("distance", (double)location.distanceTo(lastPossition));
             i.putExtra("location", getResult());
             sendBroadcast(i);
 
@@ -52,7 +56,7 @@ public class Possition extends Service{
 
         };
         try {
-            PosManager.requestLocationUpdates("gps", 1000, 2, listener);
+            PosManager.requestLocationUpdates("gps", 1000, 0, listener);
             Log.v("Access granted", "Access granted");
         } catch(SecurityException se){
             Log.v("Inaccessible", "Problem with Security");
