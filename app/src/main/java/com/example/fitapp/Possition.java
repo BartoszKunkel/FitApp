@@ -17,7 +17,7 @@ import java.util.Locale;
 public class Possition extends Service{
 
     public Location possition = null, lastPossition = null;
-    public static double latitude, longitude, distance, totalDistance, step = 0.85;
+    public static double latitude, longitude, distance,dbDistance, totalDistance, step = 0.85;
 
     LocationManager PosManager;
     LocationListener listener;
@@ -39,16 +39,28 @@ public class Possition extends Service{
             if(MainActivity.going ) {
                 if (lastPossition == null) {
                     lastPossition = possition;
+
                 }
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 distance = location.distanceTo(lastPossition);
                 totalDistance += distance;
+                dbDistance += distance;
+                if(dbDistance > 500){
+                    String a = latitude + " " + longitude;
+                    MainActivity.tour.add(a);
+                    dbDistance = 0;
+                    Log.v("Added", "Added distance to object");
+                }
             }
             Intent i = new Intent("location_update");
+            i.putExtra("possition", possition);
             i.putExtra("latitude", location.getLatitude());
             i.putExtra("longitude", location.getLongitude());
-            if(MainActivity.going)i.putExtra("distance", (double)location.distanceTo(lastPossition));
+            if(MainActivity.going){
+                i.putExtra("distance", (double)location.distanceTo(lastPossition));
+                i.putExtra("totalDisance",totalDistance);
+            }
             i.putExtra("location", getResult());
             sendBroadcast(i);
 
@@ -74,11 +86,12 @@ public class Possition extends Service{
 
     public String getResult(){
 
-        String result = "\nszerokość " +
-                Possition.changeToDegrees(true, latitude) + "\ndługość  " +
-                Possition.changeToDegrees(false, longitude) + "\nodległość " +
-                String.format(Locale.UK, "%10.1f", distance) + "\ncałkowita " +
-                String.format("%10.1f", totalDistance) + "\nliczba kroków " +
+        String result = "Your activity:" +
+                "\nLatitude: " +
+                Possition.changeToDegrees(true, latitude) + "\nLongitude:  " +
+                Possition.changeToDegrees(false, longitude) + "\nDistance (from last maesure point): " +
+                String.format(Locale.UK, "%10.1f", distance) + "\nTotal distance: " +
+                String.format("%10.1f", totalDistance) + "\nSteps: " +
                 String.format("%06d", (int) (totalDistance / step));
         return result;
     }
