@@ -22,9 +22,12 @@
         <service android:name="Stoper"
                  android:enabled="true"
                  android:exported="true"></service>
+        <activity android:name=".ProfileEdit"
+                    android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

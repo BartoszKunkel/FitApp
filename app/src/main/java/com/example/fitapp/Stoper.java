@@ -2,13 +2,9 @@ package com.example.fitapp;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class Stoper extends Service{
@@ -37,10 +33,9 @@ public class Stoper extends Service{
                 int mins = (secs%3600)/60;
                 int sec = secs%60;
                 String time = String.format("%d:%02d:%02d",hours,mins,sec);
-
                 i.putExtra("Stoper" , time);
                 sendBroadcast(i);
-                if(MainActivity.going == true) secs++;
+                if(MainActivity.going) secs++;
                 handler.postDelayed(this,1000);
             }
         });

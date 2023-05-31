@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">FitApp</string>
+    <string name="start_training">Start training</string>
+    <string name="end_training">End training</string>
+    <string name="your_activity_nlatitude_nlongitude_ndistance_ntotal_distance_nsteps">Your activity: \nLatitude: \nLongitude \nDistance \nTotal distance \nSteps</string>
+    <string name="activity_time">Activity time:</string>
+    <string name="_00_00_00">00:00:00</string>
+    <string name="choose_your_activity">Choose your activity:</string>
+    <string name="show_list">Show List</string>
+    <string-array name="spinnerItems">
+        <item>Bike</item>
+        <item>Rollers</item>
+        <item>Walk</item>
+        <item>Run</item>
+    </string-array>
 </resources>
