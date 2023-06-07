@@ -1,24 +1,34 @@
-package com.example.fitapp;
+package com.example.fitapp.Fragments;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
+import com.example.fitapp.Activities.MainActivity;
+
 import java.util.Locale;
 
-public class Possition extends Service{
-
-    public Location possition = null, lastPossition = null;
+public class Position extends Service{
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "ForegroundServiceChannel";
+    public Location position = null, lastPosition = null;
     public static double latitude, longitude, distance,dbDistance, totalDistance, step = 0.85;
-
+    public static boolean working = true;
     LocationManager PosManager;
     LocationListener listener;
 
-    public Possition() {}
+    public Position() {}
 
 
     public IBinder onBind(Intent intent){
@@ -32,14 +42,14 @@ public class Possition extends Service{
         PosManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Log.v("Work","ServiceIsWorking");
         listener = location -> {
-            possition = location;
+            position = location;
             if(MainActivity.going ) {
-                if (lastPossition == null) {
-                    lastPossition = possition;
+                if (lastPosition == null) {
+                    lastPosition = position;
                 }
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                distance = location.distanceTo(lastPossition);
+                distance = location.distanceTo(lastPosition);
                 totalDistance += distance;
                 dbDistance += distance;
                 if(dbDistance > 500){
@@ -50,17 +60,22 @@ public class Possition extends Service{
                 }}
 
             Intent i = new Intent("location_update");
-            i.putExtra("possition", possition);
+            i.putExtra("position", position);
             i.putExtra("latitude", location.getLatitude());
             i.putExtra("longitude", location.getLongitude());
             if(MainActivity.going){
-                i.putExtra("distance", (double)location.distanceTo(lastPossition));
+                i.putExtra("distance", (double)location.distanceTo(lastPosition));
                 i.putExtra("totalDistance",totalDistance);
             }
-
+            else
+            {
+                distance = 0;
+                totalDistance = 0;
+                dbDistance = 0;
+            }
             i.putExtra("location", getResult());
             sendBroadcast(i);
-            lastPossition = location;
+            lastPosition = location;
         };
 
         try {
@@ -68,6 +83,7 @@ public class Possition extends Service{
             Log.v("Access granted", "Access granted");
         } catch(SecurityException se){
             Log.v("Inaccessible", "Problem with Security");
+            working = false;
         }
     }
 
@@ -80,11 +96,12 @@ public class Possition extends Service{
         }
     }
 
+
     public String getResult(){
         return "Your activity:" +
                 "\nLatitude: " +
-                Possition.changeToDegrees(true, latitude) + "\nLongitude:  " +
-                Possition.changeToDegrees(false, longitude) + "\nDistance (from last maesure point): " +
+                Position.changeToDegrees(true, latitude) + "\nLongitude:  " +
+                Position.changeToDegrees(false, longitude) + "\nDistance (from last maesure point): " +
                 String.format(Locale.UK, "%10.1f", distance) + "\nTotal distance: " +
                 String.format("%10.1f", totalDistance) + "\nSteps: " +
                 String.format("%06d", (int) (totalDistance / step));

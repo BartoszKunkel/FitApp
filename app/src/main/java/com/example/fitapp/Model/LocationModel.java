@@ -1,4 +1,4 @@
-package com.example.fitapp;
+package com.example.fitapp.Model;
 
 
 import androidx.annotation.NonNull;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class LocationModel {
 
-    private String firstPossition, lastPossition, tourSQL;
+    private String firstPosition, lastPosition, tourSQL;
     private int id, type;
     private String initTime, endTime, time;
     private ArrayList<String> tour;
@@ -17,9 +17,9 @@ public class LocationModel {
     public LocationModel() {
     }
 
-    public LocationModel(String firstPossition, String lastPossition, int id, int type, String initTime, String endTime, String time, ArrayList<String> tour, double distance) {
-        this.firstPossition = firstPossition;
-        this.lastPossition = lastPossition;
+    public LocationModel(String firstPosition, String lastPosition, int id, int type, String initTime, String endTime, String time, ArrayList<String> tour, double distance) {
+        this.firstPosition = firstPosition;
+        this.lastPosition = lastPosition;
         this.id = id;
         this.type = type;
         this.initTime = initTime;
@@ -29,9 +29,9 @@ public class LocationModel {
         this.distance = distance;
     }
 
-    public LocationModel(int id, String firstPossition, String lastPossition, String tourSQL,  String initTime, String endTime, String time,  double distance, int type) {
-        this.firstPossition = firstPossition;
-        this.lastPossition = lastPossition;
+    public LocationModel(int id, String firstPosition, String lastPosition, String tourSQL,  String initTime, String endTime, String time,  double distance, int type) {
+        this.firstPosition = firstPosition;
+        this.lastPosition = lastPosition;
         this.id = id;
         this.type = type;
         this.initTime = initTime;
@@ -41,28 +41,28 @@ public class LocationModel {
         this.distance = distance;
     }
 
-    public void setFirstPossition(String firstPossition) {
-        this.firstPossition = firstPossition;
+    public void setFirstPosition(String firstPosition) {
+        this.firstPosition = firstPosition;
     }
 
-    public void setLastPossition(String lastPossition) {
-        this.lastPossition = lastPossition;
+    public void setLastPosition(String lastPosition) {
+        this.lastPosition = lastPosition;
     }
 
-    public String getFirstPossition() {
-        return firstPossition;
+    public String getFirstPosition() {
+        return firstPosition;
     }
 
-    public String getLastPossition() {
-        return lastPossition;
+    public String getLastPosition() {
+        return lastPosition;
     }
 
     @NonNull
     @Override
     public String toString() {
         return "LocationModel{" +
-                "firstPossition=" + firstPossition +
-                ", lastPossition=" + lastPossition +
+                "firstPosition=" + firstPosition +
+                ", lastPosition=" + lastPosition +
                 ", id=" + id +
                 ", initTime='" + initTime + '\'' +
                 ", endTime='" + endTime + '\'' +

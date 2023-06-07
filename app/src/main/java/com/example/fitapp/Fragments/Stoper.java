@@ -1,4 +1,4 @@
-package com.example.fitapp;
+package com.example.fitapp.Fragments;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.Nullable;
+
+import com.example.fitapp.Activities.MainActivity;
 
 public class Stoper extends Service{
 
@@ -36,6 +38,7 @@ public class Stoper extends Service{
                 i.putExtra("Stoper" , time);
                 sendBroadcast(i);
                 if(MainActivity.going) secs++;
+                else secs = 0;
                 handler.postDelayed(this,1000);
             }
         });

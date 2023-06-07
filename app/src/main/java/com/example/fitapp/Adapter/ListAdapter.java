@@ -1,28 +1,32 @@
-package com.example.fitapp;
+package com.example.fitapp.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.example.fitapp.Activities.MainActivity;
+import com.example.fitapp.Fragments.DataBaseHelper;
+import com.example.fitapp.Fragments.KcalCalculator;
+import com.example.fitapp.Fragments.Position;
+import com.example.fitapp.Model.LocationModel;
+import com.example.fitapp.Model.ProfileModel;
+import com.example.fitapp.R;
 
-import java.util.ArrayList;
 import java.util.List;
-import com.example.fitapp.KcalCalculator;
-public class ActivityAdapter extends BaseAdapter {
+
+public class ListAdapter extends BaseAdapter {
 
     Activity mActivity;
     List<LocationModel> locationList;
     ProfileModel profile = new ProfileModel();
     DataBaseHelper db;
-    public ActivityAdapter(Activity activity) {
+    public ListAdapter(Activity activity) {
         mActivity = activity;
         db = new DataBaseHelper(activity);
         locationList = db.getActivity();
@@ -77,28 +81,28 @@ public class ActivityAdapter extends BaseAdapter {
 
 
         //Getting latitude and longitude to proper format
-        String firstPossition = location.getFirstPossition();
-        String lastPossition = location.getLastPossition();
-        String[] splitedFirst = firstPossition.split(" ");
-        String[] splitedLast = lastPossition.split(" ");
+        String firstPosition = location.getFirstPosition();
+        String lastPosition = location.getLastPosition();
+        String[] splitedFirst = firstPosition.split(" ");
+        String[] splitedLast = lastPosition.split(" ");
 
-        if(numCheck(splitedFirst[0])) splitedFirst[0] = Possition.changeToDegrees(true, Double.parseDouble(splitedFirst[0]));
+        if(numCheck(splitedFirst[0])) splitedFirst[0] = Position.changeToDegrees(true, Double.parseDouble(splitedFirst[0]));
 
-        if(numCheck(splitedFirst[1])) splitedFirst[1] = Possition.changeToDegrees(false, Double.parseDouble(splitedLast[1]));
+        if(numCheck(splitedFirst[1])) splitedFirst[1] = Position.changeToDegrees(false, Double.parseDouble(splitedLast[1]));
 
-        if(numCheck(splitedLast[0]))splitedLast[0] = Possition.changeToDegrees(true, Double.parseDouble(splitedLast[0]));
+        if(numCheck(splitedLast[0]))splitedLast[0] = Position.changeToDegrees(true, Double.parseDouble(splitedLast[0]));
 
-        if(numCheck(splitedLast[1])) splitedLast[1] = Possition.changeToDegrees(false, Double.parseDouble(splitedLast[1]));
+        if(numCheck(splitedLast[1])) splitedLast[1] = Position.changeToDegrees(false, Double.parseDouble(splitedLast[1]));
 
-
+        String[] types = mActivity.getResources().getStringArray(R.array.spinnerItems);
         //Setting values for TextViews
-        type.setText(Integer.toString(location.getType()));
+        type.setText(types[location.getType()]);
         startDate.setText(location.getInitTime());
         endDate.setText(location.getEndTime());
-        firstPossition = splitedFirst[0] + " " + splitedFirst[1];
-        lastPossition = splitedLast[0] + " " + splitedLast[1];
-        firstPos.setText(firstPossition);
-        lastPos.setText(lastPossition);
+        firstPosition = splitedFirst[0] + " " + splitedFirst[1];
+        lastPosition = splitedLast[0] + " " + splitedLast[1];
+        firstPos.setText(firstPosition);
+        lastPos.setText(lastPosition);
         totalDist.setText(String.format("%10.1f", totalDistance));
         steps.setText(String.format("%10.1f", stepsTotal));
         time.setText(location.getTime());

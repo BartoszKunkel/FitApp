@@ -1,7 +1,8 @@
-package com.example.fitapp;
+package com.example.fitapp.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 
 import android.app.Activity;
@@ -10,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,10 +21,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fitapp.Fragments.DataBaseHelper;
+import com.example.fitapp.Adapter.ListAdapter;
+import com.example.fitapp.Model.LocationModel;
+import com.example.fitapp.Fragments.Position;
+import com.example.fitapp.R;
+import com.example.fitapp.Fragments.Stoper;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //Finding components----------------------------
         route = findViewById(R.id.route);
         stoper = findViewById(R.id.stoper);
@@ -92,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Starting Services
         Intent ii = new Intent(this, Stoper.class);
-        Intent i = new Intent(MainActivity.this, Possition.class);
+        Intent i = new Intent(MainActivity.this, Position.class);
         startService(i);
         startService(ii);
         showListView(MainActivity.this);
@@ -113,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        going = false;
+//        going = false;
     }
 
     @Override
@@ -143,17 +150,17 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(bRStoper, new IntentFilter("timer"));
 
         Intent ii = new Intent(this, Stoper.class);
-        Intent i = new Intent(MainActivity.this, Possition.class);
+        Intent i = new Intent(MainActivity.this, Position.class);
         startService(i);
         startService(ii);
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putDouble("distance", Possition.distance);
-        outState.putDouble("totalDistance",Possition.totalDistance);
-        outState.putInt("secs", Stoper.secs);}
+//    @Override
+//    protected void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putDouble("distance", Position.distance);
+//        outState.putDouble("totalDistance", Position.totalDistance);
+//        outState.putInt("secs", Stoper.secs);}
 
 
     //Listeners-------------------------------------------------------------------------------------
@@ -175,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         String InitTime = currentTime.format(formatter);
         locationModel.setId(-1);
         locationModel.setType(type);
-        locationModel.setFirstPossition(fPos);
+        locationModel.setFirstPosition(fPos);
         locationModel.setInitTime(InitTime);
 
         going = true;
@@ -185,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         String lPos = latitude + " " + longitude;
         currentTime = LocalDateTime.now();
         String EndTime = currentTime.format(formatter);
-        locationModel.setLastPossition(lPos);
+        locationModel.setLastPosition(lPos);
         locationModel.setTime(time);
         locationModel.setDistance(totalDistance);
         locationModel.setEndTime(EndTime);
@@ -201,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void showListView(Activity activity)
     {
-        ActivityAdapter adapter = new ActivityAdapter(activity);
+        ListAdapter adapter = new ListAdapter(activity);
         lv.setAdapter(adapter);
     }
 
